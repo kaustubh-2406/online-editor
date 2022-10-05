@@ -1,0 +1,32 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+model Project {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  files File[]
+
+  @@index([name])
+}
+
+model File {
+  id      Int    @id @default(autoincrement())
+  name    String
+  content String @db.LongText
+
+  Project   Project? @relation(fields: [projectId], references: [id])
+  projectId Int?
+
+  @@index([projectId, name])
+}
