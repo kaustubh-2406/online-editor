@@ -3,6 +3,10 @@ import { NextRouter, useRouter } from "next/router";
 import { useState } from "react";
 import { trpc } from "../../utils/trpc";
 
+// component library for creating split pane..
+import SplitPane from "split-pane-react";
+import "split-pane-react/esm/themes/default.css";
+
 const helper = (param: string | string[] | undefined): string => {
   if (typeof param === "undefined") return "";
   else if (typeof param === "string") return param;
@@ -16,6 +20,9 @@ const ProjectPage: NextPage = () => {
 
   const [state, setState] = useState("<h1>Hello world</h1>");
 
+  const [hsizes, setHsizes] = useState(["80%", 200]);
+  const [sizes, setSizes] = useState([200, "50%", "auto"]);
+
   const { isLoading, data } = trpc.useQuery([
     "project.exists",
     { name: helper(name) },
@@ -25,31 +32,51 @@ const ProjectPage: NextPage = () => {
   if (!data?.exists) return <div>Project doesnot exist..</div>;
 
   return (
-    <div className="flex h-screen flex-wrap overflow-hidden">
-      <div className="w-40 resize-x overflow-auto border-r-2 border-gray-500 p-4">
-        <div className="mb-8">File system</div>
+    <div className="h-[90vh]">
+      <SplitPane
+        className="flex h-full flex-col"
+        split="horizontal"
+        sizes={hsizes}
+        onChange={setHsizes}
+      >
+        <SplitPane
+          className="flex h-full w-screen overflow-hidden"
+          split="vertical"
+          sizes={sizes}
+          onChange={setSizes}
+        >
+          <div className="h-full bg-gray-200">
+            <div className="bg-[#212733] p-2 px-4 font-semibold text-white opacity-80">
+              File System
+            </div>
 
-        <div className="font-semibold">{name}</div>
-        <div className="flex flex-col gap-2">
-          {data.project?.files.map((file) => (
-            <div key={file.name}>{file.name}</div>
-          ))}
-        </div>
-      </div>
-      <div className="max-h-screen flex-1 resize-x overflow-scroll p-4 pb-60">
-        {state}
-      </div>
-      <div className="w-40 resize-x overflow-auto">
-        <div className="bg-blue-400 p-2 px-4 font-semibold text-white">
-          Preview
-        </div>
-        <div className="p-2 px-4">
-          <div dangerouslySetInnerHTML={{ __html: state }}></div>
-        </div>
-      </div>
-      <div className="absolute bottom-0 w-full resize-y overflow-auto bg-blue-400 p-20">
-        Terminal
-      </div>
+            <div className="bg-gray-400 text-center">{name}</div>
+            <div className="ml-2 flex flex-col gap-2">
+              {data.project?.files.map((file) => (
+                <div className="bg-gray-200" key={file.name}>
+                  {file.name}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="h-full bg-[#d5d7d9]">
+            <div className="bg-[#212733] p-2 px-4 font-semibold text-white opacity-80">
+              Editor
+            </div>
+            {state}
+          </div>
+          <div className="h-full bg-[#a1a5a9]">
+            <div className="bg-[#212733] p-2 px-4 font-semibold text-white opacity-80">
+              Preview
+            </div>
+            <div
+              className="p-2 px-4"
+              dangerouslySetInnerHTML={{ __html: state }}
+            ></div>
+          </div>
+        </SplitPane>
+        <div className="h-full bg-red-700 font-mono text-white">Terminal</div>
+      </SplitPane>
     </div>
   );
 };
