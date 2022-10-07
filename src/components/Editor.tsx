@@ -11,7 +11,6 @@ type Props = {
 };
 
 function EditorComponent({ state, setState }: Props) {
-  const editorRef = useRef<editor.IStandaloneCodeEditor>(null);
   const [internal, setInternal] = useState(state);
 
   // debounce state updation
@@ -20,7 +19,7 @@ function EditorComponent({ state, setState }: Props) {
   }, 500);
 
   return (
-    <div className="h-full bg-[#d5d7d9]">
+    <div className="h-full bg-[#1E1E1E]">
       <div className="w-full bg-[#212733]  p-2 px-4 font-semibold text-white opacity-80">
         Editor
       </div>
@@ -35,10 +34,6 @@ function EditorComponent({ state, setState }: Props) {
           onChange={(val) => {
             setInternal(val ?? "");
             debounced(val ?? "");
-          }}
-          onMount={(editor) => {
-            // had to do this :(
-            editorRef.current = editor;
           }}
         />
       </div>
