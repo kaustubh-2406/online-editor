@@ -58,7 +58,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="container mx-auto flex min-h-screen flex-col items-center justify-center p-4">
+      <main className="container mx-auto flex h-[90vh] flex-col items-center justify-center p-4">
         <form
           className="flex max-w-lg flex-col gap-4 border-2 border-gray-500 p-8"
           onSubmit={handleSubmit}
