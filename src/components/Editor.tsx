@@ -1,15 +1,23 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { editor } from "monaco-editor";
 import Editor from "@monaco-editor/react";
+import { useDebouncedCallback } from "use-debounce";
 
 import type { Dispatch, SetStateAction } from "react";
 
 type Props = {
+  state: string;
   setState: Dispatch<SetStateAction<string>>;
 };
 
-function EditorComponent({ setState }: Props) {
+function EditorComponent({ state, setState }: Props) {
   const editorRef = useRef<editor.IStandaloneCodeEditor>(null);
+  const [internal, setInternal] = useState(state);
+
+  // debounce state updation
+  const debounced = useDebouncedCallback((value: string) => {
+    setState(value);
+  }, 500);
 
   return (
     <div className="h-full bg-[#d5d7d9]">
@@ -23,7 +31,11 @@ function EditorComponent({ setState }: Props) {
         <Editor
           theme="vs-dark"
           defaultLanguage="html"
-          onChange={(val) => setState(val ?? "")}
+          value={internal}
+          onChange={(val) => {
+            setInternal(val ?? "");
+            debounced(val ?? "");
+          }}
           onMount={(editor) => {
             // had to do this :(
             editorRef.current = editor;

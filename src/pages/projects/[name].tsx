@@ -48,7 +48,7 @@ const ProjectPage: NextPage = () => {
           onChange={setSizes}
         >
           <Filesystem projectName={name} files={data.project?.files || []} />
-          <EditorComponent setState={setState} />
+          <EditorComponent state={state} setState={setState} />
           <Preview state={state} />
         </SplitPane>
 
