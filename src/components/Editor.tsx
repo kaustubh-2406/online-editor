@@ -1,5 +1,4 @@
-import { useRef, useState } from "react";
-import { editor } from "monaco-editor";
+import { useState } from "react";
 import Editor from "@monaco-editor/react";
 import { useDebouncedCallback } from "use-debounce";
 
