@@ -1,11 +1,15 @@
 import { NextPage } from "next";
 import { NextRouter, useRouter } from "next/router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { trpc } from "../../utils/trpc";
 
 // component library for creating split pane..
 import SplitPane from "split-pane-react";
 import "split-pane-react/esm/themes/default.css";
+
+// monaco editor libraries..
+import Editor from "@monaco-editor/react";
+import { editor } from "monaco-editor";
 
 const helper = (param: string | string[] | undefined): string => {
   if (typeof param === "undefined") return "";
@@ -22,6 +26,8 @@ const ProjectPage: NextPage = () => {
 
   const [hsizes, setHsizes] = useState(["80%", 200]);
   const [sizes, setSizes] = useState([200, "50%", "auto"]);
+
+  const editorRef = useRef<editor.IStandaloneCodeEditor>(null);
 
   const { isLoading, data } = trpc.useQuery([
     "project.exists",
@@ -60,19 +66,33 @@ const ProjectPage: NextPage = () => {
             </div>
           </div>
           <div className="h-full bg-[#d5d7d9]">
-            <div className="bg-[#212733] p-2 px-4 font-semibold text-white opacity-80">
+            <div className="w-full bg-[#212733]  p-2 px-4 font-semibold text-white opacity-80">
               Editor
             </div>
-            {state}
+            {/* {state} */}
+            <div className="w-full overflow-scroll">
+              <Editor
+                width="80vw"
+                height="90vh"
+                theme="vs-dark"
+                defaultLanguage="html"
+                defaultValue="// your code here.."
+                onChange={(val) => setState(val ?? "")}
+                onMount={(editor) => {
+                  // had to do this.. since the lib doesnot provide other ways
+                  editorRef.current = editor;
+                }}
+              />
+            </div>
           </div>
-          <div className="h-full bg-[#a1a5a9]">
+          <div className="h-full">
             <div className="bg-[#212733] p-2 px-4 font-semibold text-white opacity-80">
               Preview
             </div>
             <div
               className="p-2 px-4"
               dangerouslySetInnerHTML={{ __html: state }}
-            ></div>
+            />
           </div>
         </SplitPane>
         <div className="h-full bg-red-700 font-mono text-white">Terminal</div>
