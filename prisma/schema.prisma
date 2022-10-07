@@ -23,7 +23,7 @@ model Project {
 model File {
   id      Int    @id @default(autoincrement())
   name    String
-  content String @db.LongText
+  content String @default("") @db.LongText
 
   Project   Project? @relation(fields: [projectId], references: [id])
   projectId Int?
